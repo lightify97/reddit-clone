@@ -1,0 +1,1 @@
+{"version":3,"file":"voteOrder.js","sourceRoot":"","sources":["../../../src/graphql/types/voteOrder.ts"],"names":[],"mappings":";;;AAAA,iCAAiC;AAEpB,QAAA,aAAa,GAAG,IAAA,gBAAQ,EAAC;IAClC,IAAI,EAAE,WAAW;IACjB,OAAO,EAAE;QACL,GAAG,EAAE,CAAC;QACN,MAAM,EAAE,CAAC,CAAC;KACb;CACJ,CAAC,CAAA"}
