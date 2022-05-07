@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.me = exports.changePassword = exports.deleteUser = exports.updateUser = exports.loginUser = exports.registerUser = exports.getUser = exports.userQuery = exports.User = void 0;
+exports.logout = exports.me = exports.changePassword = exports.deleteUser = exports.updateUser = exports.loginUser = exports.registerUser = exports.getUser = exports.userQuery = exports.User = void 0;
 const argon2_1 = __importDefault(require("argon2"));
 const graphql_fields_list_1 = require("graphql-fields-list");
 const nexus_1 = require("nexus");
@@ -72,7 +72,7 @@ exports.getUser = (0, nexus_1.extendType)({
             validate: ({ string }) => ({
                 email: string().required().email(),
             }),
-            resolve(_root, { email }, { prisma }, info) {
+            resolve(_root, { email }, { prisma }, _info) {
                 return prisma.user.findUnique({
                     where: {
                         email
@@ -175,6 +175,8 @@ exports.loginUser = (0, nexus_1.extendType)({
                         };
                     }
                     req.session.userId = user.id;
+                    console.log(req.session);
+                    console.log(user.id);
                     return {
                         user
                     };
@@ -325,6 +327,25 @@ exports.me = (0, nexus_1.extendType)({
                     where: {
                         id: req.session.userId
                     }
+                });
+            }
+        });
+    }
+});
+exports.logout = (0, nexus_1.extendType)({
+    type: "Mutation",
+    definition(type) {
+        type.nonNull.boolean('logout', {
+            resolve(_root, _args, { req, res }, _info) {
+                return new Promise((resolve) => {
+                    req.session.destroy((err) => {
+                        res.clearCookie("qid");
+                        if (err) {
+                            resolve(false);
+                            return;
+                        }
+                        resolve(true);
+                    });
                 });
             }
         });

@@ -23,6 +23,7 @@ type Mutation {
   createPost(content: String, title: String!, userId: String!): Post!
   deleteUser(email: String!): UserResponse
   login(email: String!, password: String!): UserResponse
+  logout: Boolean!
   postComment(content: String!, parentComment: Int, postId: String!, userId: String!): Comment
   registerUser(avatar: String, bio: String, coverImage: String, email: String!, password: String!, username: String!): UserResponse!
   updatePassword(email: String!, oldPassword: String!, password: String!): UserResponse!

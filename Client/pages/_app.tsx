@@ -1,32 +1,39 @@
-import { GetServerSidePropsContext } from 'next';
-import { useState } from 'react';
-import { AppProps } from 'next/app';
-import { getCookie, setCookies } from 'cookies-next';
-import Head from 'next/head';
-import { MantineThemeOverride, MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
+import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
-import { createClient, dedupExchange, fetchExchange, Provider } from 'urql';
-import { cacheExchange } from '@urql/exchange-graphcache';
-
-
-// setup urql client
-const client = createClient({
-  url: 'http://localhost:4000/graphql',
-  fetchOptions: {
-    credentials: "include"
-  },
-  exchanges: [dedupExchange, cacheExchange({}), fetchExchange],
-});
+import { getCookie, setCookies } from 'cookies-next';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { UserProvider } from '../context/User';
+import '../public/global.css';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
+  // check logged in user and add to context
+  const router = useRouter();
+  let showHeaderFooter;
+  switch (router.pathname) {
+    case '/register':
+    case '/login':
+      showHeaderFooter = false;
+      break;
+    default:
+      showHeaderFooter = true;
+  }
   const { Component, pageProps } = props;
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
+  const [colorScheme, setColorScheme] = useState(props.colorScheme);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
     setColorScheme(nextColorScheme);
     setCookies('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
   };
+
+  useEffect(
+    () => setColorScheme(getCookie('mantine-color-scheme') === 'dark' ? 'dark' : 'light' || 'dark'),
+    []
+  );
 
   return (
     <>
@@ -36,19 +43,27 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <link rel="shortcut icon" href="/favicon.png" />
       </Head>
 
-      <Provider value={client}>
-        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-          <MantineProvider theme={{ colorScheme, colors: {} }} withGlobalStyles withNormalizeCSS>
-            <NotificationsProvider position='bottom-center'>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider
+          theme={{
+            colorScheme,
+            fontFamily: 'Inter, sans-serif',
+            fontFamilyMonospace: 'Monaco, Menlo, Consolas, Courier, monospace',
+            headings: { fontFamily: 'Greycliff CF, sans-serif' },
+          }}
+          withGlobalStyles
+          withNormalizeCSS
+        >
+          <NotificationsProvider position="top-center">
+            <UserProvider>
+              {/* {showHeaderFooter && <Navbar user={null} />} */}
               <Component {...pageProps} />
-            </NotificationsProvider>
-          </MantineProvider>
-        </ColorSchemeProvider>
-      </Provider>
+              {/* {showHeaderFooter && <Footer data={footerData} />} */}
+              <ColorSchemeToggle />
+            </UserProvider>
+          </NotificationsProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
     </>
   );
 }
-
-App.getInitialProps = ({ ctx }: { ctx: GetServerSidePropsContext }) => ({
-  colorScheme: getCookie('mantine-color-scheme', ctx) || 'dark',
-});

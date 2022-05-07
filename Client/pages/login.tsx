@@ -1,20 +1,17 @@
 import { Box, Center, Grid } from '@mantine/core';
 import React from 'react'
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import LoginForm from '../components/Forms/Login';
+import { createUrqlClient } from '../util/createUrqlClient';
+import { withUrqlClient } from 'next-urql'
 
-
-const Register: React.FC<{}> = ({ }) => {
+const Login: React.FC<{}> = ({ }) => {
     return (
-        <Box style={{
-            width: '100vw', height: '98vh',
-        }}>
+        <Box pt='6%' >
             <Center  >
                 <LoginForm />
             </Center>
-            <ColorSchemeToggle />
         </Box>
     );
 }
 
-export default Register;
+export default withUrqlClient(createUrqlClient)(Login);

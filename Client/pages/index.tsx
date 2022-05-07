@@ -1,20 +1,44 @@
-import { Welcome } from '../components/Welcome/Welcome';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { useMeQuery, usePostsQuery } from '../graphql/generated/graphql';
+import { LoadingOverlay, Text } from '@mantine/core';
 import Navbar from '../components/Navbar';
-import { useMeQuery } from '../graphql/generated/graphql';
+import { createUrqlClient } from '../util/createUrqlClient';
+import { withUrqlClient } from 'next-urql';
+import { isServer } from '../util/isServer';
 
-
-export default function HomePage() {
-  // const [{ data, fetching }] = useMeQuery();
-
-
+const HomePage = () => {
+  // const { user, setActiveUser } = useContext(User);
+  // const [{ data, fetching, error }, me] = useMeQuery({
+  //   pause: isServer(),
+  // });
+  const [{ data: postsData }] = usePostsQuery();
+  // if (error) {
+  // setActiveUser(null);
+  // }
+  // setActiveUser(data);
 
   return (
     <>
-
-      <Navbar />
-      <Welcome />
-      <ColorSchemeToggle />
+      <Navbar pageProps={undefined} />
+      {/* {fetching && (
+        <LoadingOverlay
+          loaderProps={{ size: 'xl', color: 'blue', variant: 'oval' }}
+          overlayOpacity={0.8}
+          overlayColor="#333333"
+          visible
+        />
+      )} */}
+      {!postsData ? (
+        <LoadingOverlay
+          loaderProps={{ size: 'xl', color: 'blue', variant: 'dots' }}
+          overlayOpacity={0.9}
+          overlayColor="#333333"
+          visible
+        />
+      ) : (
+        postsData?.posts?.map((post) => <div key={post?.id}>{post?.title}</div>)
+      )}
     </>
   );
-}
+};
+
+export default withUrqlClient(createUrqlClient, { ssr: true })(HomePage);
