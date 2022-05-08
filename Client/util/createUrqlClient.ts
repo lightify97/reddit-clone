@@ -6,6 +6,7 @@ import {
   LogoutMutation,
   MeQuery,
   RegisterMutation,
+  ResetPasswordMutation,
 } from '../graphql/generated/graphql';
 import typedUpdateQuery from './typedUpdateQuery';
 
@@ -55,6 +56,22 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => ({
                 } else {
                   return {
                     me: result.registerUser.user,
+                  };
+                }
+              }
+            );
+          },
+          resetPassword: (_result, args, cache, info) => {
+            typedUpdateQuery<ResetPasswordMutation, MeQuery>(
+              cache,
+              { query: MeDocument },
+              _result,
+              (result, query) => {
+                if (result.resetPassword.errors) {
+                  return query;
+                } else {
+                  return {
+                    me: result.resetPassword.user,
                   };
                 }
               }

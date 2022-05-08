@@ -1,42 +1,87 @@
 import {
-  Box,
   Button,
   Group,
   LoadingOverlay,
+  Modal,
+  Paper,
   PasswordInput,
   Text,
   TextInput,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
+import { useForm } from '@mantine/form';
 import { cleanNotifications, showNotification } from '@mantine/notifications';
 import { CrossCircledIcon } from '@modulz/radix-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react';
-import { z } from 'zod';
-import { User } from '../../../context/User';
-import { useLoginMutation } from '../../../graphql/generated/graphql';
+import React, { useState } from 'react';
+import { CircleCheck, CircleX, Lock, Message2 } from 'tabler-icons-react';
+import { useForgotPasswordMutation, useLoginMutation } from '../../../graphql/generated/graphql';
+import { emailSchema, loginFormSchema } from '../../../util/zodSchemas';
 import useStyles from './Login.styles';
-
-const schema = z.object({
-  email: z.string().email({ message: 'Invalid Email' }),
-  password: z.string().regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),
-});
 
 const LoginForm: React.FC<{}> = ({}) => {
   const router = useRouter();
-  const [{ fetching }, login] = useLoginMutation();
+  const [opened, setOpened] = useState(false);
+  const [{ fetching: logginIn }, login] = useLoginMutation();
   const { classes } = useStyles();
-  const form = useForm({
-    schema: zodResolver(schema),
+  const [{ fetching: sendingEmail }, forgotPassword] = useForgotPasswordMutation();
+
+  const loginForm = useForm({
+    schema: loginFormSchema,
     initialValues: {
       email: '',
       password: '',
     },
   });
 
-  const submitHandler = async (values: any) => {
+  const resetForm = useForm({
+    initialValues: {
+      email: '',
+    },
+    schema: emailSchema,
+  });
+
+  const showEmailModal = async () => {
+    cleanNotifications();
+    setOpened(true);
+  };
+
+  const submitForgottenPassword = async (values: any) => {
+    const response = await forgotPassword({ email: values.email });
+    cleanNotifications();
+    if (response.data?.forgotPassword) {
+      setOpened(false);
+      showNotification({
+        id: 'forgotPasswordSuccess',
+        autoClose: false,
+        title: 'Email Sent',
+        message: 'An email containing reset password link was sent',
+        color: 'green',
+        radius: 'md',
+        icon: <CircleCheck />,
+        className: 'success-notification',
+        style: { backgroundColor: 'dark' },
+        sx: { backgroundColor: 'dark' },
+      });
+    } else {
+      showNotification({
+        id: 'forgotPasswordFailed',
+        autoClose: false,
+        title: 'Something Went Wrong',
+        message: 'Please try with your email again.',
+        color: 'red',
+        radius: 'md',
+        icon: <CircleX />,
+        className: 'failure-notification',
+        style: { backgroundColor: 'dark' },
+        sx: { backgroundColor: 'dark' },
+      });
+    }
+  };
+
+  const submitLoginHandler = async (values: any) => {
     cleanNotifications();
     const response = await login(values);
     if (response.data?.login?.errors) {
@@ -62,26 +107,81 @@ const LoginForm: React.FC<{}> = ({}) => {
   };
 
   return (
-    <Box>
+    <Paper shadow="xl" radius="lg" p={'2%'} withBorder>
+      <Modal
+        centered
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title={
+          <Text size="xl" variant="gradient" component="span">
+            Reset Password
+          </Text>
+        }
+      >
+        <form
+          onSubmit={resetForm.onSubmit(submitForgottenPassword)}
+          style={{ fontFamily: 'Inter' }}
+        >
+          <TextInput
+            size="md"
+            icon={
+              <ThemeIcon variant="light" color="primary" size={24}>
+                <Message2 />
+              </ThemeIcon>
+            }
+            required
+            label="Enter your email"
+            placeholder="your@email.com"
+            {...resetForm.getInputProps('email')}
+            mb={10}
+          />
+
+          <Group mt="md">
+            <Button fullWidth variant="gradient" type="submit">
+              Reset Password
+            </Button>
+          </Group>
+        </form>
+        {sendingEmail && (
+          <LoadingOverlay
+            loaderProps={{ size: 'xl', color: 'red', variant: 'bars' }}
+            overlayOpacity={0.9}
+            overlayColor="#333333"
+            visible
+          />
+        )}
+      </Modal>
       <Title className={classes.title} align="center">
-        {/* Welcome to{' '} */}
         <Text inherit variant="gradient" component="span">
           Reedit Login
         </Text>
       </Title>
-      <form onSubmit={form.onSubmit(submitHandler)} style={{ fontFamily: 'Inter' }}>
+      <form onSubmit={loginForm.onSubmit(submitLoginHandler)} style={{ fontFamily: 'Inter' }}>
         <TextInput
+          size="md"
+          icon={
+            <ThemeIcon variant="light" color="primary" size={24}>
+              <Message2 />
+            </ThemeIcon>
+          }
           required
           label="Email"
           placeholder="your@email.com"
-          {...form.getInputProps('email')}
+          {...loginForm.getInputProps('email')}
+          mb={10}
         />
 
         <PasswordInput
+          size="md"
+          icon={
+            <ThemeIcon variant="light" color="primary" size={24}>
+              <Lock />
+            </ThemeIcon>
+          }
           label="Password"
           placeholder="Password"
           required
-          {...form.getInputProps('password')}
+          {...loginForm.getInputProps('password')}
         />
 
         <Group mt="md">
@@ -93,17 +193,27 @@ const LoginForm: React.FC<{}> = ({}) => {
               New Here! Sign Up
             </Button>
           </Link>
+          <Button
+            loading={sendingEmail}
+            loaderPosition="left"
+            fullWidth
+            variant="subtle"
+            color="red"
+            onClick={() => showEmailModal()}
+          >
+            Forgot Password
+          </Button>
         </Group>
-        {fetching && (
+        {logginIn && (
           <LoadingOverlay
-            loaderProps={{ size: 'xl', color: 'blue', variant: 'bars' }}
+            loaderProps={{ size: 'sm', color: 'blue', variant: 'bars' }}
             overlayOpacity={0.9}
             overlayColor="#333333"
             visible
           />
         )}
       </form>
-    </Box>
+    </Paper>
   );
 };
 

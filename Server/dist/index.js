@@ -19,40 +19,39 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
-const redis_1 = require("redis");
+const ioredis_1 = __importDefault(require("ioredis"));
 const schema_1 = require("./schema");
 const prisma = new client_1.PrismaClient({
-    log: ['query'],
+    log: ["query"],
 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
         app.use((0, cors_1.default)({ origin: "http://localhost:3000", credentials: true }));
         let RedisStore = (0, connect_redis_1.default)(express_session_1.default);
-        let redisClient = (0, redis_1.createClient)({ legacyMode: true });
-        redisClient.connect().catch(console.error);
+        let redis = new ioredis_1.default();
         app.use((0, express_session_1.default)({
             name: "qid",
-            store: new RedisStore({ client: redisClient, disableTouch: true }),
+            store: new RedisStore({ client: redis, disableTouch: true }),
             cookie: {
                 maxAge: 1000 * 60 * 8,
                 httpOnly: true,
                 secure: false,
-                sameSite: "lax"
+                sameSite: "lax",
             },
             secret: "supersecret",
             resave: true,
-            saveUninitialized: false
+            saveUninitialized: false,
         }));
         const apolloServer = new apollo_server_express_1.ApolloServer({
             debug: true,
             schema: schema_1.schema,
-            context: ({ req, res }) => ({ prisma, req, res }),
-            plugins: [apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground]
+            context: ({ req, res }) => ({ prisma, req, res, redis }),
+            plugins: [apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground],
         });
         yield apolloServer.start();
         apolloServer.applyMiddleware({ app, cors: false });
-        app.get('/', (_req, res) => res.redirect('/graphql'));
+        app.get("/", (_req, res) => res.redirect("/graphql"));
         app.listen(4000, () => {
             console.log(`🚀 Server ready at http://localhost:4000`);
         });

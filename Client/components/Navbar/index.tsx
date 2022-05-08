@@ -30,11 +30,7 @@ import { createUrqlClient } from '../../util/createUrqlClient';
 import { isServer } from '../../util/isServer';
 import useStyles from './Navbar.styles';
 
-interface NavbarProps {
-  // user?: { name: string; image: string };
-}
-
-const Navbar = ({}: NavbarProps) => {
+const Navbar = () => {
   const { classes, theme, cx } = useStyles();
   // const [opened, toggleOpened] = useBooleanToggle(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
@@ -54,12 +50,18 @@ const Navbar = ({}: NavbarProps) => {
       <Container className={classes.mainSection}>
         <Group position="apart">
           <Group>
-            <Image alt="reddit logo" src="/reddit.png" style={{}} width={50} height={50} />
+            <Image alt="reddit logo" src="/reddit.png" width={50} height={50} />
             <Text
               component="span"
               align="center"
               mt={0}
-              style={{ fontFamily: 'Inter', fontWeight: 900, fontSize: '2.4em' }}
+              style={{
+                color: '#FE452A',
+                fontFamily: 'Inter',
+                fontWeight: 900,
+                fontSize: '2.4em',
+                textShadow: `2px 3px ${theme.colorScheme === 'dark' ? '#eee' : 'orange'}`,
+              }}
             >
               REEDIT
             </Text>

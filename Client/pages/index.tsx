@@ -18,7 +18,7 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar pageProps={undefined} />
+      <Navbar />
       {/* {fetching && (
         <LoadingOverlay
           loaderProps={{ size: 'xl', color: 'blue', variant: 'oval' }}

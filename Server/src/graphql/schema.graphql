@@ -22,10 +22,12 @@ type Error {
 type Mutation {
   createPost(content: String, title: String!, userId: String!): Post!
   deleteUser(email: String!): UserResponse
+  forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): UserResponse
   logout: Boolean!
   postComment(content: String!, parentComment: Int, postId: String!, userId: String!): Comment
   registerUser(avatar: String, bio: String, coverImage: String, email: String!, password: String!, username: String!): UserResponse!
+  resetPassword(password: String!, token: String!): UserResponse!
   updatePassword(email: String!, oldPassword: String!, password: String!): UserResponse!
   updateUser(avatar: String!, bio: String, coverImage: String!, email: String!, name: String): User!
   voteComment(id: Int!, vote: voteOrder): Comment!

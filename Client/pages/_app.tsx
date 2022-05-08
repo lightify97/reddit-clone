@@ -11,16 +11,12 @@ import '../public/global.css';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   // check logged in user and add to context
+  useEffect(
+    () => setColorScheme(getCookie('mantine-color-scheme') === 'dark' ? 'dark' : 'light' || 'dark'),
+    []
+  );
   const router = useRouter();
-  let showHeaderFooter;
-  switch (router.pathname) {
-    case '/register':
-    case '/login':
-      showHeaderFooter = false;
-      break;
-    default:
-      showHeaderFooter = true;
-  }
+
   const { Component, pageProps } = props;
   const [colorScheme, setColorScheme] = useState(props.colorScheme);
 
@@ -29,11 +25,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
     setColorScheme(nextColorScheme);
     setCookies('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
   };
-
-  useEffect(
-    () => setColorScheme(getCookie('mantine-color-scheme') === 'dark' ? 'dark' : 'light' || 'dark'),
-    []
-  );
 
   return (
     <>
@@ -56,9 +47,7 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         >
           <NotificationsProvider position="top-center">
             <UserProvider>
-              {/* {showHeaderFooter && <Navbar user={null} />} */}
               <Component {...pageProps} />
-              {/* {showHeaderFooter && <Footer data={footerData} />} */}
               <ColorSchemeToggle />
             </UserProvider>
           </NotificationsProvider>

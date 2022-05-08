@@ -4,35 +4,30 @@ import {
   Checkbox,
   Group,
   LoadingOverlay,
+  Paper,
   PasswordInput,
-  Space,
   Text,
   TextInput,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
-import { useForm, zodResolver } from '@mantine/form';
+import { useForm } from '@mantine/form';
 import { cleanNotifications, showNotification } from '@mantine/notifications';
 import { CrossCircledIcon } from '@modulz/radix-icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react';
-import { z } from 'zod';
+import React from 'react';
+import { Lock, Message2, UserSearch } from 'tabler-icons-react';
 import { useRegisterMutation } from '../../../graphql/generated/graphql';
+import { registerFormSchema } from '../../../util/zodSchemas';
 import useStyles from './Register.styles';
-
-const schema = z.object({
-  email: z.string().email({ message: 'Invalid Email' }),
-  termsOfService: z.boolean(),
-  username: z.string().min(3).max(24),
-  password: z.string().regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),
-});
 
 const RegisterForm: React.FC<{}> = () => {
   const router = useRouter();
   const [{ fetching }, register] = useRegisterMutation();
   const { classes } = useStyles();
-  const form = useForm({
-    schema: zodResolver(schema),
+  const registerForm = useForm({
+    schema: registerFormSchema,
     initialValues: {
       email: '',
       termsOfService: false,
@@ -66,63 +61,89 @@ const RegisterForm: React.FC<{}> = () => {
   };
 
   return (
-    <Box>
-      <Title className={classes.title} align="center">
-        {/* Welcome to{' '} */}
-        <Text inherit variant="gradient" component="span">
-          Reedit Signup
-        </Text>
-      </Title>
-      {/* <Space h={50} /> */}
-      <form onSubmit={form.onSubmit(submitHandler)}>
-        <TextInput
-          required
-          label="Email"
-          placeholder="your@email.com"
-          {...form.getInputProps('email')}
-        />
-
-        <TextInput
-          required
-          label="Username"
-          placeholder="Username"
-          {...form.getInputProps('username')}
-        />
-
-        <PasswordInput
-          label="Password"
-          placeholder="Password"
-          required
-          {...form.getInputProps('password')}
-        />
-
-        <Checkbox
-          mt="md"
-          label="I agree to privacy terms"
-          required
-          {...form.getInputProps('termsOfService', { type: 'checkbox' })}
-        />
-
-        <Group mt="md">
-          <Button fullWidth variant="gradient" type="submit">
-            Register
-          </Button>
-          <Link href={'/login'} passHref>
-            <Button onClick={() => cleanNotifications()} fullWidth variant="outline" color="cyan">
-              Already Registered! Go to Login
-            </Button>
-          </Link>
-        </Group>
-        {fetching && (
-          <LoadingOverlay
-            loaderProps={{ size: 'xl', color: 'blue', variant: 'bars' }}
-            overlayOpacity={0.9}
-            overlayColor="#333333"
-            visible
+    <Paper shadow="xl" radius="lg" p={'2%'} withBorder>
+      <Box>
+        <Title className={classes.title} align="center">
+          <Text inherit variant="gradient" component="span">
+            Reedit Signup
+          </Text>
+        </Title>
+        {/* <Space h={50} /> */}
+        <form onSubmit={registerForm.onSubmit(submitHandler)}>
+          <TextInput
+            size="md"
+            icon={
+              <ThemeIcon variant="light" color="primary" size={24}>
+                <Message2 />
+              </ThemeIcon>
+            }
+            required
+            label="Email"
+            placeholder="your@email.com"
+            {...registerForm.getInputProps('email')}
+            mb={10}
           />
-        )}
-      </form>
-    </Box>
+
+          <TextInput
+            size="md"
+            icon={
+              <ThemeIcon variant="light" color="primary" size={24}>
+                <UserSearch />
+              </ThemeIcon>
+            }
+            required
+            label="Username"
+            placeholder="Username"
+            {...registerForm.getInputProps('username')}
+            mb={10}
+          />
+
+          <PasswordInput
+            size="md"
+            icon={
+              <ThemeIcon variant="light" color="primary" size={24}>
+                <Lock />
+              </ThemeIcon>
+            }
+            label="Password"
+            placeholder="Password"
+            required
+            {...registerForm.getInputProps('password')}
+            mb={10}
+          />
+
+          <Checkbox
+            mt="md"
+            label="I agree to privacy terms"
+            required
+            {...registerForm.getInputProps('termsOfService', { type: 'checkbox' })}
+          />
+
+          <Group mt="md">
+            <Button fullWidth variant="gradient" type="submit">
+              <Text variant="text" component="span">
+                Register
+              </Text>
+            </Button>
+            <Link href={'/login'} passHref>
+              <Button onClick={() => cleanNotifications()} fullWidth variant="outline" color="cyan">
+                <Text variant="gradient" component="span">
+                  Already Registered! Go to Login
+                </Text>
+              </Button>
+            </Link>
+          </Group>
+          {fetching && (
+            <LoadingOverlay
+              loaderProps={{ size: 'xl', color: 'blue', variant: 'bars' }}
+              overlayOpacity={0.9}
+              overlayColor="#333333"
+              visible
+            />
+          )}
+        </form>
+      </Box>
+    </Paper>
   );
 };
 
