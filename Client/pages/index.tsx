@@ -7,36 +7,25 @@ import { isServer } from '../util/isServer';
 
 const HomePage = () => {
   // const { user, setActiveUser } = useContext(User);
-  // const [{ data, fetching, error }, me] = useMeQuery({
-  //   pause: isServer(),
-  // });
-  const [{ data: postsData }] = usePostsQuery();
-  // if (error) {
-  // setActiveUser(null);
-  // }
-  // setActiveUser(data);
+
+  const [{ data: postsData, fetching }] = usePostsQuery();
 
   return (
     <>
       <Navbar />
-      {/* {fetching && (
+      {fetching && (
         <LoadingOverlay
           loaderProps={{ size: 'xl', color: 'blue', variant: 'oval' }}
           overlayOpacity={0.8}
           overlayColor="#333333"
           visible
         />
-      )} */}
-      {!postsData ? (
-        <LoadingOverlay
-          loaderProps={{ size: 'xl', color: 'blue', variant: 'dots' }}
-          overlayOpacity={0.9}
-          overlayColor="#333333"
-          visible
-        />
-      ) : (
-        postsData?.posts?.map((post) => <div key={post?.id}>{post?.title}</div>)
       )}
+      {!postsData
+        ? null
+        : postsData?.posts?.map((post) => (
+            <div key={post?.id} dangerouslySetInnerHTML={{ __html: post?.content }}></div>
+          ))}
     </>
   );
 };

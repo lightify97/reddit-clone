@@ -240,7 +240,7 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: st
 export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string } | null> | null };
+export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content?: string | null } | null> | null };
 
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
@@ -336,6 +336,7 @@ export const PostsDocument = gql`
     createdAt
     updatedAt
     title
+    content
   }
 }
     `;

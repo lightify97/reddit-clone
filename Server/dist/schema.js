@@ -35,5 +35,9 @@ exports.schema = (0, nexus_1.makeSchema)({
         typegen: (0, path_1.join)(process.cwd(), "node_modules", "@types", "nexus-typegen", "index.d.ts"),
         schema: (0, path_1.join)(process.cwd(), "src", "graphql", "schema.graphql"),
     },
+    contextType: {
+        export: "Context",
+        module: (0, path_1.join)(process.cwd(), "./src/context.ts"),
+    },
 });
 //# sourceMappingURL=schema.js.map

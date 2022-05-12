@@ -57,7 +57,6 @@ exports.userQuery = (0, nexus_1.extendType)({
                 Object.keys(fields).forEach((f) => {
                     fields[f] = true;
                 });
-                console.log(fields);
                 return context.prisma.user.findMany({
                     select: Object.assign({}, fields),
                 });
@@ -169,7 +168,6 @@ exports.loginUser = (0, nexus_1.extendType)({
                             ],
                         };
                     }
-                    console.log(user.password);
                     const valid = yield argon2_1.default.verify(user.password, password);
                     if (!valid) {
                         return {
@@ -182,8 +180,6 @@ exports.loginUser = (0, nexus_1.extendType)({
                         };
                     }
                     req.session.userId = user.id;
-                    console.log(req.session);
-                    console.log(user.id);
                     return {
                         user,
                     };
@@ -332,10 +328,7 @@ exports.me = (0, nexus_1.extendType)({
     definition(type) {
         type.nullable.field("me", {
             type: "User",
-            resolve(_root, _args, { prisma, req }) {
-                if (!req.session.userId) {
-                    return null;
-                }
+            resolve(_root, _args, { prisma, req, loggedIn }) {
                 return prisma.user.findUnique({
                     where: {
                         id: req.session.userId,
@@ -411,7 +404,6 @@ exports.resetPassword = (0, nexus_1.extendType)({
             resolve(_root, { token, password }, { prisma, redis, req }) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const userId = yield redis.getdel("forget-password:" + token);
-                    console.log(userId);
                     if (!userId) {
                         return {
                             errors: [

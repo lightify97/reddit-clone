@@ -1,8 +1,9 @@
 query Posts {
-    posts {
-        id
-        createdAt
-        updatedAt
-        title
-    }
+  posts {
+    id
+    createdAt
+    updatedAt
+    title
+    content
+  }
 }

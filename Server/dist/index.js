@@ -19,7 +19,9 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
+const graphql_middleware_1 = require("graphql-middleware");
 const ioredis_1 = __importDefault(require("ioredis"));
+const permissions_1 = __importDefault(require("./middlewares/permissions"));
 const schema_1 = require("./schema");
 const prisma = new client_1.PrismaClient({
     log: ["query"],
@@ -45,7 +47,7 @@ function main() {
         }));
         const apolloServer = new apollo_server_express_1.ApolloServer({
             debug: true,
-            schema: schema_1.schema,
+            schema: (0, graphql_middleware_1.applyMiddleware)(schema_1.schema, permissions_1.default),
             context: ({ req, res }) => ({ prisma, req, res, redis }),
             plugins: [apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground],
         });

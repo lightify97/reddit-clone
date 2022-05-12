@@ -26,12 +26,13 @@ import {
 import { createUrqlClient } from '../../util/createUrqlClient';
 import { emailSchema, passwordSchema } from '../../util/zodSchemas';
 
-const ResetPassword: NextPage<{ token: string }> = ({ token }) => {
+const ResetPassword: NextPage<> = () => {
   const [opened, setOpened] = useState(false);
   const [{ fetching: sendingEmail }, forgotPassword] = useForgotPasswordMutation();
   const [{ fetching: resettingPassword, error: errorResettingPassword }, resetPassword] =
     useResetPasswordMutation();
   const router = useRouter();
+  const token = router.query.token;
 
   const passwordResetForm = useForm({
     schema: passwordSchema,
@@ -206,12 +207,6 @@ const ResetPassword: NextPage<{ token: string }> = ({ token }) => {
       </Center>
     </Box>
   );
-};
-
-ResetPassword.getInitialProps = ({ query }) => {
-  return {
-    token: query.token as string,
-  };
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: false })(ResetPassword);

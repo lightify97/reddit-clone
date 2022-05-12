@@ -11,3 +11,8 @@
   font-weight: 900;
   font-style: 'normal';
 }
+
+.ql-container p,
+.ql-container span {
+  line-height: 0.5;
+}

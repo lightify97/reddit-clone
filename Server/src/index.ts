@@ -5,8 +5,10 @@ import connectRedis from "connect-redis";
 import cors from "cors";
 import express from "express";
 import session from "express-session";
+import { applyMiddleware } from "graphql-middleware";
 import Redis from "ioredis";
 import { Context } from "./context";
+import permissions from "./middlewares/permissions";
 import { schema } from "./schema";
 
 const prisma = new PrismaClient({
@@ -41,7 +43,7 @@ async function main() {
 
   const apolloServer = new ApolloServer({
     debug: true,
-    schema: schema,
+    schema: applyMiddleware(schema, permissions),
     context: ({ req, res }): Context => ({ prisma, req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
   });

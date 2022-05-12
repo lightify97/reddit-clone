@@ -3,6 +3,7 @@ import { fieldsMap } from "graphql-fields-list";
 import { extendType, nonNull, nullable, objectType, stringArg } from "nexus";
 import { sendEmail } from "../../util/sendEmail";
 import { v4 } from "uuid";
+import { prisma } from "@prisma/client";
 
 export const User = objectType({
   name: "User",
@@ -325,11 +326,7 @@ export const me = extendType({
   definition(type) {
     type.nullable.field("me", {
       type: "User",
-      resolve(_root, _args, { prisma, req }) {
-        if (!req.session.userId) {
-          return null;
-        }
-
+      resolve(_root, _args, { prisma, req, loggedIn }) {
         return prisma.user.findUnique({
           where: {
             id: req.session.userId,
@@ -352,7 +349,6 @@ export const logout = extendType({
               resolve(false);
               return;
             }
-
             resolve(true);
           });
         });

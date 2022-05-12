@@ -35,11 +35,11 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => ({
               { query: MeDocument },
               _result,
               (result, query) => {
-                if (result.login?.errors) {
+                if (result.login.errors) {
                   return query;
                 } else {
                   return {
-                    me: result.login?.user,
+                    me: result.login.user,
                   };
                 }
               }

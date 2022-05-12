@@ -6,13 +6,14 @@ import {
   Group,
   Indicator,
   Menu,
+  Skeleton,
   Text,
   UnstyledButton,
 } from '@mantine/core';
 import { withUrqlClient } from 'next-urql';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import {
   ChevronDown,
   Heart,
@@ -34,7 +35,7 @@ const Navbar = () => {
   const { classes, theme, cx } = useStyles();
   // const [opened, toggleOpened] = useBooleanToggle(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const [{ data }, me] = useMeQuery({
+  const [{ data, fetching: fetchingUser }, me] = useMeQuery({
     pause: isServer(),
   });
   const [_, logout] = useLogoutMutation();
@@ -66,19 +67,13 @@ const Navbar = () => {
               REEDIT
             </Text>
           </Group>
-          {!user && (
-            <Group>
-              <Link href={'/login'} passHref>
-                <Button leftIcon={<UserCheck />}>Login</Button>
-              </Link>
-              <Link href={'/register'} passHref>
-                <Button leftIcon={<UserPlus />} variant="filled" color="green">
-                  Sign Up
-                </Button>
-              </Link>
-            </Group>
-          )}
-          {user && (
+          {/* {fetchingUser && (
+            <Suspense fallback={null}>
+              <Skeleton animate={false} height={50} circle mb="xl" />
+              <Skeleton animate={false} height={8} radius="xl" />
+            </Suspense>
+          )} */}
+          {user ? (
             <Group>
               <Menu
                 shadow="xl"
@@ -153,6 +148,17 @@ const Navbar = () => {
                   Delete account
                 </Menu.Item>
               </Menu>
+            </Group>
+          ) : (
+            <Group>
+              <Link href={'/login'} passHref>
+                <Button leftIcon={<UserCheck />}>Login</Button>
+              </Link>
+              <Link href={'/register'} passHref>
+                <Button leftIcon={<UserPlus />} variant="filled" color="green">
+                  Sign Up
+                </Button>
+              </Link>
             </Group>
           )}
         </Group>
