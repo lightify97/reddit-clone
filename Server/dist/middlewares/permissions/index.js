@@ -9,7 +9,9 @@ const rules = {
     }),
 };
 const permissions = (0, graphql_shield_1.shield)({
-    Query: {},
+    Query: {
+        posts: rules.isAuth,
+    },
     Mutation: {
         createPost: rules.isAuth,
         deleteUser: rules.isAuth,

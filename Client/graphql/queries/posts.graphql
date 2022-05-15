@@ -1,9 +1,12 @@
-query Posts {
-  posts {
+query Posts($byUser: String!) {
+  posts(byUser: $byUser) {
     id
     createdAt
     updatedAt
     title
     content
+    author {
+      name
+    }
   }
 }

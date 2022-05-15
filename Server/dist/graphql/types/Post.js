@@ -10,8 +10,8 @@ exports.Post = (0, nexus_1.objectType)({
         type.string("updatedAt");
         type.nonNull.string("title");
         type.nonNull.int("votes");
-        type.string("content");
-        type.field("author", {
+        type.nonNull.string("content");
+        type.nonNull.field("author", {
             type: "User",
             resolve(root, _args, context, _info) {
                 return context.prisma.post

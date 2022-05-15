@@ -11,10 +11,10 @@ import '../public/global.css';
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   // check logged in user and add to context
-  useEffect(
-    () => setColorScheme(getCookie('mantine-color-scheme') === 'dark' ? 'dark' : 'light' || 'dark'),
-    []
-  );
+  // useEffect(
+  //   () => setColorScheme(getCookie('mantine-color-scheme') === 'dark' ? 'dark' : 'light' || 'dark'),
+  //   []
+  // );
   const router = useRouter();
 
   const { Component, pageProps } = props;

@@ -9,7 +9,9 @@ const rules = {
 };
 
 const permissions = shield({
-  Query: {},
+  Query: {
+    posts: rules.isAuth,
+  },
   Mutation: {
     createPost: rules.isAuth,
     deleteUser: rules.isAuth,

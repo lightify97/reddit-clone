@@ -1,37 +1,40 @@
 import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
-    header: {
-        // paddingTop: 5,
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2],
-        // borderBottom: `1px solid ${theme.colors[theme.primaryColor][5]}`,
-    },
+  header: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[5],
+    fontFamily: 'Inter',
+  },
 
-    mainSection: {
-        padding: 1
-    },
+  logo: {
+    color: '#FE452A',
+    fontWeight: 900,
+    fontSize: '2.4em',
+    textShadow: `2px 3px #eee`,
+  },
 
-    userMenu: {
-        marginTop: 10,
-        [theme.fn.smallerThan('xs')]: {
-            // display: 'none',
-        },
-    },
-    user: {
-        color: theme.white,
-        // padding: `1px 0`,
-        paddingRight: 10,
-        borderRadius: 600,// theme.radius.sm,
-        transition: 'background-color 100ms ease',
+  mainSection: {
+    padding: 1,
+  },
 
-        '&:hover': {
-            // backgroundColor: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 9 : 5],
-            backgroundColor: theme.colors.gray[theme.colorScheme === 'dark' ? 7 : 5],
-        },
+  userMenu: {
+    marginTop: 10,
+    [theme.fn.smallerThan('xs')]: {
+      // display: 'none',
     },
+  },
+  user: {
+    color: theme.white,
+    paddingRight: 10,
+    borderRadius: 600, // theme.radius.sm,
+    transition: 'background-color 100ms ease',
 
-    userActive: {
-        backgroundColor: theme.colors.gray[theme.colorScheme === 'dark' ? 7 : 5],
-
+    '&:hover': {
+      backgroundColor: theme.colors.gray[9],
     },
+  },
+
+  userActive: {
+    backgroundColor: theme.colors.gray[9],
+  },
 }));

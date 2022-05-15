@@ -159,6 +159,11 @@ export type QueryPostCommentsArgs = {
 };
 
 
+export type QueryPostsArgs = {
+  byUser?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryRepliesArgs = {
   commentId: Scalars['Int'];
 };
@@ -203,6 +208,15 @@ export type ResetPasswordMutationVariables = Exact<{
 
 export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, name: string, email: string } | null, errors?: Array<{ __typename?: 'Error', field?: string | null, message: string } | null> | null } };
 
+export type CreatePostMutationVariables = Exact<{
+  title: Scalars['String'];
+  content: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: string, title: string, content?: string | null, author?: { __typename?: 'User', id: string, name: string } | null } };
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -237,10 +251,12 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string } | null };
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  byUser: Scalars['String'];
+}>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content?: string | null } | null> | null };
+export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content?: string | null, author?: { __typename?: 'User', name: string } | null } | null> | null };
 
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
@@ -265,6 +281,23 @@ export const ResetPasswordDocument = gql`
 
 export function useResetPasswordMutation() {
   return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
+};
+export const CreatePostDocument = gql`
+    mutation CreatePost($title: String!, $content: String!, $userId: String!) {
+  createPost(title: $title, content: $content, userId: $userId) {
+    id
+    title
+    content
+    author {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
@@ -330,17 +363,20 @@ export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, '
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($byUser: String!) {
+  posts(byUser: $byUser) {
     id
     createdAt
     updatedAt
     title
     content
+    author {
+      name
+    }
   }
 }
     `;
 
-export function usePostsQuery(options?: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };

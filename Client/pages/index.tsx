@@ -1,31 +1,25 @@
-import { useMeQuery, usePostsQuery } from '../graphql/generated/graphql';
-import { LoadingOverlay, Text } from '@mantine/core';
-import Navbar from '../components/Navbar';
-import { createUrqlClient } from '../util/createUrqlClient';
+import { LoadingOverlay } from '@mantine/core';
 import { withUrqlClient } from 'next-urql';
+import Navbar from '../components/Navbar';
+import Post from '../components/Post';
+import { useMeQuery, usePostsQuery } from '../graphql/generated/graphql';
+import { createUrqlClient } from '../util/createUrqlClient';
 import { isServer } from '../util/isServer';
 
 const HomePage = () => {
   // const { user, setActiveUser } = useContext(User);
-
-  const [{ data: postsData, fetching }] = usePostsQuery();
-
+  const [{ data: user }, getMe] = useMeQuery({
+    // pause: isServer(),
+  });
+  const [{ data: postsData, fetching }, getPosts] = usePostsQuery({
+    variables: {
+      byUser: user?.me?.id || null,
+    },
+  });
   return (
     <>
       <Navbar />
-      {fetching && (
-        <LoadingOverlay
-          loaderProps={{ size: 'xl', color: 'blue', variant: 'oval' }}
-          overlayOpacity={0.8}
-          overlayColor="#333333"
-          visible
-        />
-      )}
-      {!postsData
-        ? null
-        : postsData?.posts?.map((post) => (
-            <div key={post?.id} dangerouslySetInnerHTML={{ __html: post?.content }}></div>
-          ))}
+      {postsData ? postsData?.posts?.map((post) => <Post key={post?.id} post={post} />) : null}
     </>
   );
 };
