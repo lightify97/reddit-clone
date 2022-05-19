@@ -328,12 +328,15 @@ exports.me = (0, nexus_1.extendType)({
     definition(type) {
         type.nullable.field("me", {
             type: "User",
-            resolve(_root, _args, { prisma, req, loggedIn }) {
-                return prisma.user.findUnique({
-                    where: {
-                        id: req.session.userId,
-                    },
-                });
+            resolve(_root, _args, { prisma, req }) {
+                if (req.session.userId) {
+                    return prisma.user.findUnique({
+                        where: {
+                            id: req.session.userId,
+                        },
+                    });
+                }
+                return null;
             },
         });
     },

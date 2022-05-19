@@ -36,13 +36,13 @@ function main() {
             name: "qid",
             store: new RedisStore({ client: redis, disableTouch: true }),
             cookie: {
-                maxAge: 1000 * 60 * 8,
+                maxAge: 1000 * 60 * 60 * 24,
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
             },
             secret: "supersecret",
-            resave: true,
+            resave: false,
             saveUninitialized: false,
         }));
         const apolloServer = new apollo_server_express_1.ApolloServer({
@@ -53,7 +53,6 @@ function main() {
         });
         yield apolloServer.start();
         apolloServer.applyMiddleware({ app, cors: false });
-        app.get("/", (_req, res) => res.redirect("/graphql"));
         app.listen(4000, () => {
             console.log(`🚀 Server ready at http://localhost:4000`);
         });

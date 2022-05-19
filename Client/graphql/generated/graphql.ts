@@ -127,9 +127,9 @@ export type MutationVotePostArgs = {
 
 export type Post = {
   __typename?: 'Post';
-  author?: Maybe<User>;
+  author: User;
   comments?: Maybe<Array<Maybe<Comment>>>;
-  content?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
   createdAt: Scalars['String'];
   id: Scalars['String'];
   title: Scalars['String'];
@@ -156,11 +156,6 @@ export type QueryPostArgs = {
 
 export type QueryPostCommentsArgs = {
   id: Scalars['String'];
-};
-
-
-export type QueryPostsArgs = {
-  byUser?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -215,7 +210,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: string, title: string, content?: string | null, author?: { __typename?: 'User', id: string, name: string } | null } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', id: string, title: string, content: string, author: { __typename?: 'User', id: string, name: string } } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -251,12 +246,10 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string } | null };
 
-export type PostsQueryVariables = Exact<{
-  byUser: Scalars['String'];
-}>;
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content?: string | null, author?: { __typename?: 'User', name: string } | null } | null> | null };
+export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content: string, author: { __typename?: 'User', name: string } } | null> | null };
 
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
@@ -363,8 +356,8 @@ export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, '
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
 export const PostsDocument = gql`
-    query Posts($byUser: String!) {
-  posts(byUser: $byUser) {
+    query Posts {
+  posts {
     id
     createdAt
     updatedAt
@@ -377,6 +370,6 @@ export const PostsDocument = gql`
 }
     `;
 
-export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
+export function usePostsQuery(options?: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };

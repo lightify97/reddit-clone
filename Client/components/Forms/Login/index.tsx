@@ -27,6 +27,7 @@ const LoginForm: React.FC<{}> = ({}) => {
   const [{ fetching: logginIn }, login] = useLoginMutation();
   const { classes } = useStyles();
   const [{ fetching: sendingEmail }, forgotPassword] = useForgotPasswordMutation();
+  // const { user, setUser } = useContext(State);
 
   const loginForm = useForm({
     schema: loginFormSchema,
@@ -101,8 +102,8 @@ const LoginForm: React.FC<{}> = ({}) => {
         });
       });
     } else if (response.data?.login?.user) {
-      let user = response.data.login.user;
-      router.push('/');
+      if (typeof router.query.next === 'string') router.push(router.query.next);
+      else router.push('/');
     }
   };
 

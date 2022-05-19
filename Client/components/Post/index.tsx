@@ -25,13 +25,14 @@ const Post = ({ post }: PostProps) => {
                 </Text>
               </Group>
             </Card.Section>
-            <Divider my="sm" variant="solid" />
+            <Divider my="xs" variant="solid" />
 
             <Text
               size="sm"
               style={{ lineHeight: 1.5 }}
               dangerouslySetInnerHTML={{ __html: post.content }}
             ></Text>
+            <Divider my="xs" variant="solid" />
           </Card>
         </Box>
       </Container>

@@ -34,6 +34,7 @@
     "@mantine/spotlight": "^4.2.2",
     "@modulz/radix-icons": "^4.0.0",
     "@next/bundle-analyzer": "^12.1.4",
+    "@urql/devtools": "^2.0.3",
     "@urql/exchange-graphcache": "^4.3.6",
     "cookies-next": "^2.0.4",
     "dayjs": "^1.11.1",

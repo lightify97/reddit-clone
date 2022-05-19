@@ -1,9 +1,14 @@
 import { createStyles } from '@mantine/core';
 
 export default createStyles((theme) => ({
-  header: {
+  navbar: {
+    position: 'sticky',
+    top: 0,
+    width: '100%',
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.dark[5],
     fontFamily: 'Inter',
+    zIndex: 222,
+    padding: '1px 20px',
   },
 
   logo: {
@@ -11,11 +16,17 @@ export default createStyles((theme) => ({
     fontWeight: 900,
     fontSize: '2.4em',
     textShadow: `2px 3px #eee`,
+
+    a: {
+      color: '#FE452A',
+      textDecoration: 'none',
+      '&:visited': {
+        color: '#FE452A',
+      },
+    },
   },
 
-  mainSection: {
-    padding: 1,
-  },
+  mainSection: {},
 
   userMenu: {
     marginTop: 10,

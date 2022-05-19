@@ -22,7 +22,6 @@ async function main() {
   // Redis setup
   let RedisStore = connectRedis(session);
   let redis = new Redis();
-  // redis.connect().catch(console.error)
 
   // setup session and auth cookie
   app.use(
@@ -30,13 +29,13 @@ async function main() {
       name: "qid",
       store: new RedisStore({ client: redis, disableTouch: true }),
       cookie: {
-        maxAge: 1000 * 60 * 8,
+        maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
         secure: false, // only work in https
         sameSite: "lax",
       },
       secret: "supersecret",
-      resave: true,
+      resave: false,
       saveUninitialized: false,
     })
   );
@@ -51,7 +50,7 @@ async function main() {
   // starting server and hooking into express middleware
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, cors: false });
-  app.get("/", (_req, res) => res.redirect("/graphql"));
+  // app.get("/", (_req, res) => res.redirect("/graphql"));
   app.listen(4000, () => {
     console.log(`🚀 Server ready at http://localhost:4000`);
   });

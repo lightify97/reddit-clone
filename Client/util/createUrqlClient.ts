@@ -1,3 +1,4 @@
+import { devtoolsExchange } from '@urql/devtools';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import { createClient, dedupExchange, fetchExchange, ssrExchange } from 'urql';
 import {
@@ -17,6 +18,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => ({
   },
 
   exchanges: [
+    devtoolsExchange,
     dedupExchange,
     cacheExchange({
       updates: {

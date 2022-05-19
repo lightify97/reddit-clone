@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postQuery = exports.postsQuery = exports.upvotePost = exports.createPost = exports.Post = void 0;
 const nexus_1 = require("nexus");
@@ -85,13 +94,20 @@ exports.postsQuery = (0, nexus_1.extendType)({
         type.list.field("posts", {
             type: "Post",
             args: {
-                byUser: (0, nexus_1.nullable)((0, nexus_1.stringArg)()),
+                take: (0, nexus_1.nonNull)((0, nexus_1.intArg)({ default: 30 })),
+                cursor: (0, nexus_1.stringArg)(),
             },
-            resolve(_root, { byUser }, { prisma }, _info) {
-                if (byUser !== null) {
-                    return prisma.user.findUnique({ where: { id: byUser } }).posts();
-                }
-                return prisma.post.findMany();
+            resolve(_root, { take, cursor }, { prisma }, _info) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    take = Math.min(take, 30);
+                    const posts = yield prisma.post.findMany({
+                        take: take,
+                        orderBy: {
+                            createdAt: "desc",
+                        },
+                    });
+                    return posts;
+                });
             },
         });
     },

@@ -1,4 +1,4 @@
-import { extendType, nonNull, nullable, objectType, stringArg } from "nexus";
+import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 
 export const Post = objectType({
   name: "Post",
@@ -86,13 +86,18 @@ export const postsQuery = extendType({
     type.list.field("posts", {
       type: "Post",
       args: {
-        byUser: nullable(stringArg()),
+        take: nonNull(intArg({ default: 30 })),
+        cursor: stringArg(),
       },
-      resolve(_root, { byUser }, { prisma }, _info) {
-        if (byUser !== null) {
-          return prisma.user.findUnique({ where: { id: byUser } }).posts();
-        }
-        return prisma.post.findMany();
+      async resolve(_root, { take, cursor }, { prisma }, _info) {
+        take = Math.min(take, 30);
+        const posts = await prisma.post.findMany({
+          take: take,
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+        return posts;
       },
     });
   },

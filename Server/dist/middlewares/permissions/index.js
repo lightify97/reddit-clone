@@ -11,6 +11,7 @@ const rules = {
 const permissions = (0, graphql_shield_1.shield)({
     Query: {
         posts: rules.isAuth,
+        me: graphql_shield_1.allow,
     },
     Mutation: {
         createPost: rules.isAuth,

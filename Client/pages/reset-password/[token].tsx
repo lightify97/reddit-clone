@@ -26,7 +26,7 @@ import {
 import { createUrqlClient } from '../../util/createUrqlClient';
 import { emailSchema, passwordSchema } from '../../util/zodSchemas';
 
-const ResetPassword: NextPage<> = () => {
+const ResetPassword: NextPage = () => {
   const [opened, setOpened] = useState(false);
   const [{ fetching: sendingEmail }, forgotPassword] = useForgotPasswordMutation();
   const [{ fetching: resettingPassword, error: errorResettingPassword }, resetPassword] =

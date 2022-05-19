@@ -1,5 +1,5 @@
-query Posts($byUser: String!) {
-  posts(byUser: $byUser) {
+query Posts {
+  posts {
     id
     createdAt
     updatedAt

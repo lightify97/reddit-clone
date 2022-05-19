@@ -1,4 +1,4 @@
-import { rule, shield } from "graphql-shield";
+import { allow, not, rule, shield } from "graphql-shield";
 import { Context } from "../../context";
 
 const rules = {
@@ -11,6 +11,7 @@ const rules = {
 const permissions = shield({
   Query: {
     posts: rules.isAuth,
+    me: allow,
   },
   Mutation: {
     createPost: rules.isAuth,
