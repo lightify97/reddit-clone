@@ -1,11 +1,12 @@
-query Posts {
-  posts {
+query Feed($take: Int, $cursor: String) {
+  feed(take: $take, cursor: $cursor) {
     id
     createdAt
     updatedAt
     title
     content
     author {
+      id
       name
     }
   }

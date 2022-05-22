@@ -10,7 +10,7 @@ const rules = {
 };
 const permissions = (0, graphql_shield_1.shield)({
     Query: {
-        posts: rules.isAuth,
+        feed: graphql_shield_1.allow,
         me: graphql_shield_1.allow,
     },
     Mutation: {

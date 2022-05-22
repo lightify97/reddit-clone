@@ -91,22 +91,36 @@ exports.upvotePost = (0, nexus_1.extendType)({
 exports.postsQuery = (0, nexus_1.extendType)({
     type: "Query",
     definition(type) {
-        type.list.field("posts", {
+        type.list.field("feed", {
             type: "Post",
             args: {
-                take: (0, nexus_1.nonNull)((0, nexus_1.intArg)({ default: 30 })),
-                cursor: (0, nexus_1.stringArg)(),
+                take: (0, nexus_1.nonNull)((0, nexus_1.intArg)({ default: 15 })),
+                cursor: (0, nexus_1.nullable)((0, nexus_1.stringArg)()),
             },
             resolve(_root, { take, cursor }, { prisma }, _info) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    take = Math.min(take, 30);
-                    const posts = yield prisma.post.findMany({
-                        take: take,
-                        orderBy: {
-                            createdAt: "desc",
-                        },
-                    });
-                    return posts;
+                    take = Math.min(take, 15);
+                    if (cursor) {
+                        return prisma.post.findMany({
+                            take,
+                            where: {
+                                createdAt: {
+                                    lt: new Date(parseInt(cursor)),
+                                },
+                            },
+                            orderBy: {
+                                createdAt: "desc",
+                            },
+                        });
+                    }
+                    else {
+                        return prisma.post.findMany({
+                            take,
+                            orderBy: {
+                                createdAt: "desc",
+                            },
+                        });
+                    }
                 });
             },
         });

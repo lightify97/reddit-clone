@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { Lock, Message2, UserSearch } from 'tabler-icons-react';
 import { useRegisterMutation } from '../../../graphql/generated/graphql';
+import { customLoader } from '../../../util/customLoader';
 import { registerFormSchema } from '../../../util/zodSchemas';
 import useStyles from './Register.styles';
 
@@ -135,7 +136,7 @@ const RegisterForm: React.FC<{}> = () => {
           </Group>
           {fetching && (
             <LoadingOverlay
-              loaderProps={{ size: 'xl', color: 'blue', variant: 'bars' }}
+              loader={customLoader}
               overlayOpacity={0.9}
               overlayColor="#333333"
               visible

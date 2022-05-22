@@ -139,13 +139,19 @@ export type Post = {
 
 export type Query = {
   __typename?: 'Query';
+  feed?: Maybe<Array<Maybe<Post>>>;
   me?: Maybe<User>;
   post?: Maybe<Post>;
   postComments?: Maybe<Array<Maybe<Comment>>>;
-  posts?: Maybe<Array<Maybe<Post>>>;
   replies?: Maybe<Array<Maybe<Comment>>>;
   user?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type QueryFeedArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  take?: Scalars['Int'];
 };
 
 
@@ -241,15 +247,18 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', registerUser: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'Error', field?: string | null, message: string } | null> | null, user?: { __typename?: 'User', id: string, name: string, email: string } | null } };
 
+export type FeedQueryVariables = Exact<{
+  take?: InputMaybe<Scalars['Int']>;
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FeedQuery = { __typename?: 'Query', feed?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content: string, author: { __typename?: 'User', name: string } } | null> | null };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name: string, email: string } | null };
-
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type PostsQuery = { __typename?: 'Query', posts?: Array<{ __typename?: 'Post', id: string, createdAt: string, updatedAt?: string | null, title: string, content: string, author: { __typename?: 'User', name: string } } | null> | null };
 
 export const RegularUserFragmentDoc = gql`
     fragment RegularUser on User {
@@ -344,20 +353,9 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
-export const MeDocument = gql`
-    query Me {
-  me {
-    ...RegularUser
-  }
-}
-    ${RegularUserFragmentDoc}`;
-
-export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
-  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
-};
-export const PostsDocument = gql`
-    query Posts {
-  posts {
+export const FeedDocument = gql`
+    query Feed($take: Int, $cursor: String) {
+  feed(take: $take, cursor: $cursor) {
     id
     createdAt
     updatedAt
@@ -370,6 +368,17 @@ export const PostsDocument = gql`
 }
     `;
 
-export function usePostsQuery(options?: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
-  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
+export function useFeedQuery(options?: Omit<Urql.UseQueryArgs<FeedQueryVariables>, 'query'>) {
+  return Urql.useQuery<FeedQuery>({ query: FeedDocument, ...options });
+};
+export const MeDocument = gql`
+    query Me {
+  me {
+    ...RegularUser
+  }
+}
+    ${RegularUserFragmentDoc}`;
+
+export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
+  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };

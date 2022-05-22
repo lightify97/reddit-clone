@@ -23,7 +23,7 @@ const CreatePost = () => {
       title: '',
     },
   });
-
+  const [{ data: user, fetching }, getMe] = useMeQuery();
   useIsAuth('create-post');
   const submitPost = async (values) => {
     // getMe();
@@ -75,6 +75,7 @@ const CreatePost = () => {
         <form onSubmit={postForm.onSubmit(submitPost)} style={{ fontFamily: 'Inter' }}>
           <TextInput
             size="md"
+            required
             icon={
               <ThemeIcon variant="light" color="primary" size={24}>
                 <Heading />

@@ -18,6 +18,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { CircleCheck, CircleX, Lock, Message2 } from 'tabler-icons-react';
 import { useForgotPasswordMutation, useLoginMutation } from '../../../graphql/generated/graphql';
+import { customLoader } from '../../../util/customLoader';
 import { emailSchema, loginFormSchema } from '../../../util/zodSchemas';
 import useStyles from './Login.styles';
 
@@ -145,7 +146,8 @@ const LoginForm: React.FC<{}> = ({}) => {
         </form>
         {sendingEmail && (
           <LoadingOverlay
-            loaderProps={{ size: 'xl', color: 'red', variant: 'bars' }}
+            loaderProps={{ size: 'xl' }}
+            loader={customLoader}
             overlayOpacity={0.9}
             overlayColor="#333333"
             visible
@@ -207,7 +209,8 @@ const LoginForm: React.FC<{}> = ({}) => {
         </Group>
         {logginIn && (
           <LoadingOverlay
-            loaderProps={{ size: 'sm', color: 'blue', variant: 'bars' }}
+            loaderProps={{ size: 'xl' }}
+            loader={customLoader}
             overlayOpacity={0.9}
             overlayColor="#333333"
             visible

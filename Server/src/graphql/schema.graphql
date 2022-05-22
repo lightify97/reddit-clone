@@ -46,10 +46,10 @@ type Post {
 }
 
 type Query {
+  feed(cursor: String, take: Int! = 15): [Post]
   me: User
   post(id: String!): Post
   postComments(id: String!): [Comment]
-  posts(cursor: String, take: Int! = 30): [Post]
   replies(commentId: Int!): [Comment]
   user(email: String!): User
   users: [User]

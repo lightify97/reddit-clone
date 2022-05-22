@@ -1,45 +1,25 @@
-import { Box, Button, Container, DEFAULT_THEME, LoadingOverlay } from '@mantine/core';
+import { Box, Button, Container, LoadingOverlay } from '@mantine/core';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
-import { Plus } from 'tabler-icons-react';
+import { Plus, Refresh } from 'tabler-icons-react';
 import Navbar from '../components/Navbar';
 import Post from '../components/Post';
-import { useMeQuery, usePostsQuery } from '../graphql/generated/graphql';
+import { useFeedQuery, useMeQuery } from '../graphql/generated/graphql';
 import { createUrqlClient } from '../util/createUrqlClient';
+import { customLoader } from '../util/customLoader';
 import { isServer } from '../util/isServer';
 
-const HomePage: React.FC<{}> = ({}) => {
-  const customLoader = (
-    <svg
-      width="54"
-      height="54"
-      viewBox="0 0 38 38"
-      xmlns="http://www.w3.org/2000/svg"
-      stroke={DEFAULT_THEME.colors.blue[6]}
-    >
-      <g fill="none" fillRule="evenodd">
-        <g transform="translate(1 1)" strokeWidth="2">
-          <circle strokeOpacity=".5" cx="18" cy="18" r="18" />
-          <path d="M36 18c0-9.94-8.06-18-18-18">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 18 18"
-              to="360 18 18"
-              dur="1s"
-              repeatCount="indefinite"
-            />
-          </path>
-        </g>
-      </g>
-    </svg>
-  );
+const HomePage: React.FC = () => {
   // const { user, setActiveUser } = useContext(User);
   const [{ data: user }, getMe] = useMeQuery({
     pause: isServer(),
   });
-  const [{ data: postsData, fetching }, getPosts] = usePostsQuery();
-  // console.log(postsData);
+  const [{ data: postsData, fetching }, getFeed] = useFeedQuery();
+
+  const loadMorePosts = () => {
+    let t = getFeed();
+    console.log(t);
+  };
   return (
     <>
       <Navbar pageProps={undefined} />
@@ -54,8 +34,27 @@ const HomePage: React.FC<{}> = ({}) => {
           </Box>
         </Box>
       </Container>
-      {/* {fetching ? <LoadingOverlay visible loader={customLoader} /> : null} */}
-      {postsData ? postsData?.posts?.map((post) => <Post key={post?.id} post={post} />) : null}
+      {fetching ? <LoadingOverlay visible loader={customLoader} /> : null}
+      {postsData ? postsData?.feed?.map((post) => <Post key={post!.id} post={post} />) : null}
+      {postsData ? (
+        <Container>
+          <Box my={'1%'}>
+            <Box style={{ width: 600 }}>
+              <Button
+                color="green"
+                leftIcon={<Refresh />}
+                variant="outline"
+                radius="md"
+                size="md"
+                fullWidth
+                onClick={loadMorePosts}
+              >
+                Load More
+              </Button>
+            </Box>
+          </Box>
+        </Container>
+      ) : null}
     </>
   );
 };

@@ -1,3 +1,4 @@
+import { Post } from "@prisma/client";
 import { extendType, intArg, nonNull, nullable, objectType, stringArg } from "nexus";
 
 export const Post = objectType({
@@ -83,21 +84,34 @@ export const upvotePost = extendType({
 export const postsQuery = extendType({
   type: "Query",
   definition(type) {
-    type.list.field("posts", {
+    type.list.field("feed", {
       type: "Post",
       args: {
-        take: nonNull(intArg({ default: 30 })),
-        cursor: stringArg(),
+        take: nonNull(intArg({ default: 15 })),
+        cursor: nullable(stringArg()),
       },
       async resolve(_root, { take, cursor }, { prisma }, _info) {
-        take = Math.min(take, 30);
-        const posts = await prisma.post.findMany({
-          take: take,
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
-        return posts;
+        take = Math.min(take, 15);
+        if (cursor) {
+          return prisma.post.findMany({
+            take,
+            where: {
+              createdAt: {
+                lt: new Date(parseInt(cursor)),
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          });
+        } else {
+          return prisma.post.findMany({
+            take,
+            orderBy: {
+              createdAt: "desc",
+            },
+          });
+        }
       },
     });
   },

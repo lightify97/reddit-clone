@@ -1,4 +1,5 @@
 import { Badge, Box, Card, Container, Divider, Group, Text } from '@mantine/core';
+import RichTextEditor from '../RichTextEditor';
 
 interface PostProps {
   post: {
@@ -25,14 +26,14 @@ const Post = ({ post }: PostProps) => {
                 </Text>
               </Group>
             </Card.Section>
-            <Divider my="xs" variant="solid" />
-
-            <Text
-              size="sm"
-              style={{ lineHeight: 1.5 }}
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            ></Text>
-            <Divider my="xs" variant="solid" />
+            {/* <Divider my="xs" variant="solid" /> */}
+            <RichTextEditor className="postContent" value={post.content} readOnly />
+            {/* <Text
+            size="sm"
+            style={{ lineHeight: 1.5 }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></Text> */}
+            {/* <Divider my="xs" variant="solid" /> */}
           </Card>
         </Box>
       </Container>

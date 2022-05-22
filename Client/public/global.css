@@ -44,3 +44,10 @@
   z-index: 444444;
   overflow: hidden;
 }
+
+.postContent,
+.postContent .ql-editor {
+  border: 0;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}

@@ -1,7 +1,6 @@
 import {
   Avatar,
   Button,
-  Container,
   Divider,
   Group,
   Indicator,
@@ -12,7 +11,7 @@ import {
 import { withUrqlClient } from 'next-urql';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ChevronDown,
   Heart,
@@ -25,7 +24,6 @@ import {
   UserCheck,
   UserPlus,
 } from 'tabler-icons-react';
-import { State } from '../../context';
 import { useLogoutMutation, useMeQuery } from '../../graphql/generated/graphql';
 import { createUrqlClient } from '../../util/createUrqlClient';
 import { isServer } from '../../util/isServer';
