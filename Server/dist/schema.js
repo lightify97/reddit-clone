@@ -30,7 +30,7 @@ const types = __importStar(require("./graphql"));
 const nexus_validate_1 = require("nexus-validate");
 exports.schema = (0, nexus_1.makeSchema)({
     types,
-    plugins: [(0, nexus_validate_1.validatePlugin)()],
+    plugins: [(0, nexus_validate_1.validatePlugin)(), (0, nexus_1.fieldAuthorizePlugin)()],
     outputs: {
         typegen: (0, path_1.join)(process.cwd(), "node_modules", "@types", "nexus-typegen", "index.d.ts"),
         schema: (0, path_1.join)(process.cwd(), "src", "graphql", "schema.graphql"),

@@ -5,14 +5,16 @@ import connectRedis from "connect-redis";
 import cors from "cors";
 import express from "express";
 import session from "express-session";
-import { applyMiddleware } from "graphql-middleware";
 import Redis from "ioredis";
 import { Context } from "./context";
-import permissions from "./middlewares/permissions";
 import { schema } from "./schema";
 
 const prisma = new PrismaClient({
   log: ["query"],
+});
+
+prisma.$on("query", (e) => {
+  console.log("Params: " + e.params);
 });
 
 async function main() {
@@ -42,7 +44,8 @@ async function main() {
 
   const apolloServer = new ApolloServer({
     debug: true,
-    schema: applyMiddleware(schema, permissions),
+    // schema: applyMiddleware(schema, permissions),
+    schema: schema,
     context: ({ req, res }): Context => ({ prisma, req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
   });

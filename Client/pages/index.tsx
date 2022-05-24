@@ -1,6 +1,7 @@
 import { Box, Button, Container, LoadingOverlay } from '@mantine/core';
 import { withUrqlClient } from 'next-urql';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Plus, Refresh } from 'tabler-icons-react';
 import Navbar from '../components/Navbar';
 import Post from '../components/Post';
@@ -11,14 +12,18 @@ import { isServer } from '../util/isServer';
 
 const HomePage: React.FC = () => {
   // const { user, setActiveUser } = useContext(User);
+  const [feedVariables, setFeedVariables] = useState({ take: 10, cursor: null });
   const [{ data: user }, getMe] = useMeQuery({
     pause: isServer(),
   });
-  const [{ data: postsData, fetching }, getFeed] = useFeedQuery();
-
+  const [{ data: postsData, fetching }, getFeed] = useFeedQuery({ variables: feedVariables });
   const loadMorePosts = () => {
-    let t = getFeed();
-    console.log(t);
+    let lastPostTimestamp = postsData?.feed[postsData.feed?.length - 1]?.createdAt;
+    console.log(lastPostTimestamp);
+    setFeedVariables({
+      take: feedVariables.take,
+      cursor: lastPostTimestamp,
+    });
   };
   return (
     <>
@@ -34,8 +39,9 @@ const HomePage: React.FC = () => {
           </Box>
         </Box>
       </Container>
-      {fetching ? <LoadingOverlay visible loader={customLoader} /> : null}
-      {postsData ? postsData?.feed?.map((post) => <Post key={post!.id} post={post} />) : null}
+      {console.log(postsData)}
+      {/* {fetching ? <LoadingOverlay visible loader={customLoader} /> : null} */}
+      {postsData ? postsData?.feed?.map((post) => <Post key={post?.id} post={post} />) : null}
       {postsData ? (
         <Container>
           <Box my={'1%'}>

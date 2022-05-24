@@ -28,12 +28,7 @@ const Post = ({ post }: PostProps) => {
             </Card.Section>
             {/* <Divider my="xs" variant="solid" /> */}
             <RichTextEditor className="postContent" value={post.content} readOnly />
-            {/* <Text
-            size="sm"
-            style={{ lineHeight: 1.5 }}
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          ></Text> */}
-            {/* <Divider my="xs" variant="solid" /> */}
+            <p>{post.createdAt}</p>
           </Card>
         </Box>
       </Container>

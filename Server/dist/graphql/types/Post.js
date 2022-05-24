@@ -54,6 +54,7 @@ exports.createPost = (0, nexus_1.extendType)({
                 content: (0, nexus_1.nullable)((0, nexus_1.stringArg)()),
                 userId: (0, nexus_1.nonNull)((0, nexus_1.stringArg)()),
             },
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, args, { prisma }) {
                 return prisma.post.create({
                     data: {
@@ -75,6 +76,7 @@ exports.upvotePost = (0, nexus_1.extendType)({
                 postId: (0, nexus_1.nonNull)((0, nexus_1.stringArg)()),
                 vote: "voteOrder",
             },
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_, { postId, vote }, { prisma }) {
                 return prisma.post.update({
                     where: { id: postId },
@@ -97,6 +99,7 @@ exports.postsQuery = (0, nexus_1.extendType)({
                 take: (0, nexus_1.nonNull)((0, nexus_1.intArg)({ default: 15 })),
                 cursor: (0, nexus_1.nullable)((0, nexus_1.stringArg)()),
             },
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, { take, cursor }, { prisma }, _info) {
                 return __awaiter(this, void 0, void 0, function* () {
                     take = Math.min(take, 15);

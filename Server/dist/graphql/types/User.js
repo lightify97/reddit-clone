@@ -75,6 +75,7 @@ exports.getUser = (0, nexus_1.extendType)({
             validate: ({ string }) => ({
                 email: string().required().email(),
             }),
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, { email }, { prisma }, _info) {
                 return prisma.user.findUnique({
                     where: {
@@ -206,6 +207,7 @@ exports.updateUser = (0, nexus_1.extendType)({
                 avatar: string().url(),
                 coverImage: string().url(),
             }),
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, args, context) {
                 return context.prisma.user.update({
                     where: {
@@ -233,6 +235,7 @@ exports.deleteUser = (0, nexus_1.extendType)({
             validate: ({ string }) => ({
                 email: string().required().email(),
             }),
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, { email }, { prisma }) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const exists = yield prisma.user.findUnique({ where: { email } });
@@ -345,6 +348,7 @@ exports.logout = (0, nexus_1.extendType)({
     type: "Mutation",
     definition(type) {
         type.nonNull.boolean("logout", {
+            authorize: (_root, args, ctx) => !!ctx.req.session.userId,
             resolve(_root, _args, { req, res }, _info) {
                 return new Promise((resolve) => {
                     req.session.destroy((err) => {

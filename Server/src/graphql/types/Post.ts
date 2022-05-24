@@ -45,6 +45,7 @@ export const createPost = extendType({
         content: nullable(stringArg()),
         userId: nonNull(stringArg()),
       },
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       resolve(_root, args, { prisma }) {
         return prisma.post.create({
           data: {
@@ -67,6 +68,7 @@ export const upvotePost = extendType({
         postId: nonNull(stringArg()),
         vote: "voteOrder", //nonNull(intArg({ default: 1, }))
       },
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       resolve(_, { postId, vote }, { prisma }) {
         return prisma.post.update({
           where: { id: postId },
@@ -90,6 +92,7 @@ export const postsQuery = extendType({
         take: nonNull(intArg({ default: 15 })),
         cursor: nullable(stringArg()),
       },
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       async resolve(_root, { take, cursor }, { prisma }, _info) {
         take = Math.min(take, 15);
         if (cursor) {

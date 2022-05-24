@@ -8,35 +8,41 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(cuid())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
-  email      String    @unique
-  password   String
-  name       String
-  avatar     String?
-  coverImage String?
-  bio        String?   @db.VarChar(255)
-  posts      Post[]
-  comments   Comment[]
+  id           String         @id @default(cuid())
+  createdAt    DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime?      @updatedAt @db.Timestamp(6)
+  email        String         @unique
+  password     String
+  name         String
+  avatar       String?
+  coverImage   String?
+  bio          String?        @db.VarChar(255)
+  Posts        Post[]
+  Comments     Comment[]
+  Bookmarks    Bookmark[]
+  Channels     Channel[]
+  UserChannels UserChannels[]
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  content   String?   @db.Text()
-  title     String    @db.Text()
-  votes     Int       @default(0)
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt DateTime?  @updatedAt @db.Timestamp(6)
+  content   String?    @db.Text()
+  title     String     @db.Text()
+  votes     Int        @default(0)
   userId    String
-  author    User      @relation(references: [id], fields: [userId])
-  comments  Comment[]
+  author    User       @relation(references: [id], fields: [userId])
+  Comments  Comment[]
+  Bookmark  Bookmark[]
+
+  @@index([createdAt])
 }
 
 model Comment {
   id            Int       @id @default(autoincrement())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime? @updatedAt
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime? @updatedAt @db.Timestamp(6)
   parentComment Int?
   content       String
   votes         Int       @default(0)
@@ -44,4 +50,37 @@ model Comment {
   post          Post      @relation(references: [id], fields: [postId])
   userId        String
   author        User      @relation(references: [id], fields: [userId])
+
+  @@index([createdAt])
+}
+
+model Bookmark {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @updatedAt @db.Timestamp(6)
+  userId    String
+  user      User      @relation(references: [id], fields: [userId])
+  postId    String    @unique
+  post      Post      @relation(references: [id], fields: [postId])
+}
+
+model Channel {
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime?      @updatedAt @db.Timestamp(6)
+  name          String         @db.VarChar(30)
+  createdByUser String
+  Creator       User           @relation(references: [id], fields: [createdByUser])
+  UserChannels  UserChannels[]
+}
+
+model UserChannels {
+  userId    String
+  channelId String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      User     @relation(fields: [userId], references: [id])
+  channel   Channel  @relation(fields: [channelId], references: [id])
+
+  @@unique([userId, channelId])
+  @@index([userId, channelId])
 }

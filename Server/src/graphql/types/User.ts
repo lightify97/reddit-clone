@@ -65,6 +65,7 @@ export const getUser = extendType({
       validate: ({ string }) => ({
         email: string().required().email(),
       }),
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       resolve(_root, { email }, { prisma }, _info) {
         return prisma.user.findUnique({
           where: {
@@ -199,6 +200,7 @@ export const updateUser = extendType({
         avatar: string().url(),
         coverImage: string().url(),
       }),
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       resolve(_root, args, context) {
         return context.prisma.user.update({
           where: {
@@ -227,6 +229,7 @@ export const deleteUser = extendType({
       validate: ({ string }) => ({
         email: string().required().email(),
       }),
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       async resolve(_root, { email }, { prisma }) {
         const exists = await prisma.user.findUnique({ where: { email } });
         if (!exists) {
@@ -343,6 +346,7 @@ export const logout = extendType({
   type: "Mutation",
   definition(type) {
     type.nonNull.boolean("logout", {
+      authorize: (_root, args, ctx) => !!ctx.req.session.userId,
       resolve(_root, _args, { req, res }, _info) {
         return new Promise((resolve) => {
           req.session.destroy((err: any) => {
